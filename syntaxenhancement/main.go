@@ -64,6 +64,7 @@ func maxArea2(height []int) (maxArea int) {
 			rigth--
 		}
 	}
+	return
 }
 
 /*
