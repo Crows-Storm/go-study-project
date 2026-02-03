@@ -21,7 +21,7 @@ func main() {
 	fmt.Println(maxArea2([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})) // medium
 }
 
-func maxArea(height []int) (maxArea int) {
+func maxArea(height []int) (maxArea int) { // O(N²)
 	fmt.Println("========== max Area ==========")
 	offset := 0
 	for i := 0; i < len(height); i++ { // move long
@@ -43,7 +43,7 @@ func maxArea(height []int) (maxArea int) {
 	return
 }
 
-func maxArea2(height []int) (maxArea int) {
+func maxArea2(height []int) (maxArea int) { // O(N)
 	fmt.Println("========== max Area 2 ==========")
 	left, rigth := 0, len(height)-1
 
