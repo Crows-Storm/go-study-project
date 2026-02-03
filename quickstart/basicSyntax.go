@@ -2,9 +2,6 @@ package main
 
 import (
 	"fmt"
-	"sort"
-	"strconv"
-	"strings"
 )
 
 func main() {
@@ -55,11 +52,6 @@ func main() {
 	fmt.Println("========== register Student ==========")
 	success := registerStudent(student)
 	fmt.Println(success)
-
-	anagrams := groupAnagrams([]string{"eat", "tea", "tan", "ate", "nat", "bat"})
-	fmt.Println(anagrams)
-	groupAnagrams2([]string{"paper", "apple", "title", "banana", "hello", "hills"})
-	groupAnagrams3([]string{"paper", "apple", "title", "banana", "hello", "hills"})
 
 	makeMaps()
 }
@@ -442,116 +434,6 @@ func arraysVariable() {
 	fmt.Println(len(myslice3))
 	fmt.Println(cap(myslice3))
 	fmt.Println(myslice3)
-}
-
-/*
-from https://leetcode.cn/problems/group-anagrams/description/?envType=study-plan-v2&envId=top-100-liked
-Input: strs = ["eat", "tea", "tan", "ate", "nat", "bat"]
-Output: [["bat"],["nat","tan"],["ate","eat","tea"]]
-
-Explanation:
-No strings in strs can be rearranged to form "bat".
-The strings "nat" and "tan" are anagrams because they can be rearranged to form each other.
-The strings "ate", "eat", and "tea" are anagrams because they can be rearranged to form each other.
-*/
-func groupAnagrams(strs []string) [][]string {
-	groups := make(map[string][]string)
-
-	for _, s := range strs {
-		// b a t
-		chars := strings.Split(s, "")
-		// a b t
-		sort.Strings(chars)
-
-		// abt
-		key := strings.Join(chars, "")
-
-		// [abt:[bat] aet:[eat tea ate] ant:[tan nat]]
-		// groups[aet] = [], append groups[eat] = [] + [ate]
-		// groups[aet] = [ate], append groups[eat] = [ate] + [eat]
-		// groups[aet] = [ate, ate], append groups[eat] = [ate, ate] + [tea]
-		// groups[aet] = [ate, ate, tea]
-		groups[key] = append(groups[key], s)
-	}
-
-	result := make([][]string, 0, len(groups))
-	for _, group := range groups {
-		result = append(result, group)
-	}
-	return result
-}
-
-// ["paper", "apple", "title", "banana", "hello", "hills"]
-func groupAnagrams2(strs []string) (groups map[string][]string) {
-	groups = make(map[string][]string)
-	fmt.Println("========== group Anagrams ==========")
-
-	result := map[string][]string{}
-	for _, str := range strs {
-		num := 0
-		split := strings.Split(str, "")
-
-		// {id:[str], id:[str]}
-		groupMapping := map[string][]int{}
-		var groupId []int
-		for _, s := range split {
-			// {0:p, 1:a, 2:e, 3:r}
-			if groupMapping[s] == nil {
-				groupMapping[s] = append(groupMapping[s], num)
-				num++
-			}
-			groupId = append(groupId, groupMapping[s]...)
-		}
-		sb := strings.Builder{}
-		for _, g := range groupId {
-			sb.WriteString(strconv.Itoa(g))
-		}
-		id := sb.String()
-		result[id] = append(result[id], str)
-	}
-	for k, v := range result {
-		groups[k] = v
-	}
-
-	results := make([][]string, 0)
-	for _, i := range groups {
-		results = append(results, i)
-	}
-
-	fmt.Println(results)
-	return groups
-}
-
-// ["paper", "apple", "title", "banana", "hello", "hills"]
-func groupAnagrams3(strs []string) map[string][]string {
-	fmt.Println("========== group Anagrams ==========")
-	groups := make(map[string][]string)
-
-	for _, str := range strs { // paper
-		key := getPatternKey(str)
-		groups[key] = append(groups[key], str)
-	}
-
-	fmt.Println(groups)
-	return groups
-}
-
-func getPatternKey(s string) string {
-	charIndex := make(map[rune]int)
-	var pattern []byte
-	nextIdx := 0
-
-	for _, ch := range s {
-		if idx, exists := charIndex[ch]; exists {
-			pattern = append(pattern, byte('a'+idx))
-		} else {
-			charIndex[ch] = nextIdx
-			pattern = append(pattern, byte('a'+nextIdx))
-			nextIdx++
-		}
-	}
-
-	return string(pattern)
 }
 
 func getIndexOutOfBounds(length int) int {
