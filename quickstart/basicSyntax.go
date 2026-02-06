@@ -54,6 +54,219 @@ func main() {
 	fmt.Println(success)
 
 	makeMaps()
+
+	constant()
+
+	applyIotaAtPermission()
+
+	pointer()
+}
+
+type User struct {
+	name  string
+	email string
+}
+
+func pointer() {
+	fmt.Println("========== pointer ==========")
+
+	count := 10
+	fmt.Println("count:\tValue Of[", count, "]\tAddr Of[", &count, "]")
+	increment1(count) // transfer value, operation is count value
+	fmt.Println("count:\tValue Of[", count, "]\tAddr Of[", &count, "]")
+
+	increment2(&count) // transfer pointer, operation is a address in memory
+	fmt.Println("count:\tValue Of[", count, "]\tAddr Of[", &count, "]")
+
+	var u User
+	u = stayOnStack() // return a copy
+	fmt.Println(&u)
+	u2 := escapeToHeap() // return address at memory
+	fmt.Println(&u2)
+}
+
+func stayOnStack() User {
+	// In the stayOnStack stack frame, create a value and initialize it.
+	u := User{
+		name:  "Sander Q",
+		email: "sanderQ@gmail.com",
+	}
+
+	// Take the value and return it, pass back up to main stack frame.
+	return u
+}
+
+func escapeToHeap() *User {
+	u := User{
+		name:  "Sander Q",
+		email: "sanderQ@gmail.com",
+	}
+
+	return &u
+}
+
+func increment2(inc *int) {
+	// Increment the "value of" count that the "pointer points to".
+	// The * is an operator. It tells us the value of the pointer points to.
+	*inc++
+	fmt.Println("inc2:\tValue Of[", inc, "]\tAddr Of[", &inc, "]\tValue Points To[", *inc, "]")
+}
+
+func increment1(inc int) {
+	// Increment the "value of" inc.
+	inc++
+	fmt.Println("inc1:\tValue Of[", inc, "]\tAddr Of[", &inc, "]")
+}
+
+func applyIotaAtPermission() {
+	fmt.Println("========== apply Iota at permission ==========")
+
+	const (
+		ReadPermission    = 1 << iota // iota=0: 1 << 0 = 1 (binary: 0000 0001)
+		WritePermission               // iota=1: 1 << 1 = 2 (binary: 0000 0010)
+		ExecutePermission             // iota=2: 1 << 2 = 4 (binary: 0000 0100)
+		DeletePermission              // iota=3: 1 << 3 = 8 (binary: 0000 1000)
+	)
+	userPermissions := ReadPermission | WritePermission | ExecutePermission
+	fmt.Printf("Combine permission values: %d (binary: %08b)\n", userPermissions, userPermissions)
+
+	// check permission
+	canRed := (userPermissions & ReadPermission) != 0   // 7 & 1 = 1
+	canDel := (userPermissions & DeletePermission) != 0 // 7 & 8 = 0
+	fmt.Println(canRed, canDel)
+
+	fmt.Printf("binary: %08b", 7&1)
+
+	userPermissions = userPermissions | DeletePermission
+	canDel = (userPermissions & DeletePermission) != 0
+	fmt.Printf("\nCombine permission values: %d (binary: %08b)\n", userPermissions, userPermissions)
+	fmt.Println(canRed, canDel)
+
+	fmt.Printf("binary: %08b", 15&8)
+
+	fmt.Println("\n------------- Multiple assignments -------------")
+	const (
+		ErrSuccess               = iota                          // iota start at 0
+		_                                                        // skip
+		ErrNotFound, MsgNotFound = iota, "not found"             // iota=2
+		ErrTimeout, MsgTimeout   = iota, "out tome"              // iota=3
+		ErrInternal, MsgInternal = iota, "internal server error" // iota=4
+	)
+
+	fmt.Printf("error code: %d, msg: %s\n", ErrNotFound, MsgNotFound)
+	fmt.Printf("error code: %d, msg: %s\n", ErrInternal, MsgInternal)
+
+	const (
+		Apple, Banana   = iota, iota + 1       // init start iota at 0, Apple = 0, Banana = 0+1 = 1
+		Cherry, Durian                         // current iota = 1, Cherry = 1, Durian = 1 + 1 = 2, Implicit compliance
+		Elderberry, Fig = iota * 10, iota * 20 // current iota = 2, Elderberry = 2 * 10 = 20, Fig = 2 * 20 = 40
+	)
+}
+
+func constant() {
+	fmt.Println("========== constant ==========")
+	// ----------------------
+	// Declare and initialize
+	// ----------------------
+
+	// Constant can be typed or untyped.
+	// When it is untyped, we consider it as a kind.
+	// They are implicitly converted by the compiler.
+
+	// Untyped Constants.
+	const ui = 12345    // kind: integer
+	const uf = 3.141592 // kind: floating-point
+
+	fmt.Println(ui)
+	fmt.Println(uf)
+
+	// Typed Constants still use the constant type system but their precision is restricted.
+	const ti int = 12345        // type: int
+	const tf float64 = 3.141592 // type: float64
+
+	fmt.Println(ti)
+	fmt.Println(tf)
+
+	// This doesn't work because constant 1000 overflows uint8.
+	// const myUint8 uint8 = 1000
+
+	// Constant arithmetic supports different kinds.
+	// Kind Promotion is used to determine kind in these scenarios.
+	// All of this happens implicitly.
+
+	// Variable answer will be of type float64.
+	var answer = 3 * 0.333 // KindFloat(3) * KindFloat(0.333)
+
+	fmt.Println(answer)
+
+	// Constant third will be of kind floating point.
+	const third = 1 / 3.0 // KindFloat(1) / KindFloat(3.0)
+
+	fmt.Println(third)
+
+	// Constant zero will be of kind integer.
+	const zero = 1 / 3 // KindInt(1) / KindInt(3)
+
+	fmt.Println(zero)
+
+	// This is an example of constant arithmetic between typed and
+	// untyped constants. Must have like types to perform math.
+	const one int8 = 1
+	const two = 2 * one // int8(2) * int8(1)
+
+	fmt.Println(one)
+	fmt.Println(two)
+
+	// Max integer value on 64 bit architecture.
+	const maxInt = 9223372036854775807
+
+	fmt.Println(maxInt)
+
+	// Much larger value than int64 but still compile because of untyped system.
+	// 256 is a lot of space (depending on the architecture)
+	// const bigger = 9223372036854775808543522345
+
+	// Will NOT compile because it exceeds 64 bit
+	// const biggerInt int64 = 9223372036854775808543522345
+
+	// ----
+	// iota
+	// ----
+
+	const (
+		A1 = iota // 0 : Start at 0
+		B1 = iota // 1 : Increment by 1
+		C1 = iota // 2 : Increment by 1
+	)
+
+	fmt.Println("1:", A1, B1, C1)
+
+	const (
+		A2 = iota // 0 : Start at 0
+		B2        // 1 : Increment by 1
+		C2        // 2 : Increment by 1
+	)
+
+	fmt.Println("2:", A2, B2, C2)
+
+	const (
+		A3 = iota + 1 // 1 : Start at 0 + 1
+		B3            // 2 : Increment by 1
+		C3            // 3 : Increment by 1
+	)
+
+	fmt.Println("3:", A3, B3, C3)
+
+	const (
+		Ldate         = 1 << iota //  1 : Shift 1 to the left 0.  0000 0001
+		Ltime                     //  2 : Shift 1 to the left 1.  0000 0010
+		Lmicroseconds             //  4 : Shift 1 to the left 2.  0000 0100
+		Llongfile                 //  8 : Shift 1 to the left 3.  0000 1000
+		Lshortfile                // 16 : Shift 1 to the left 4.  0001 0000
+		LUTC                      // 32 : Shift 1 to the left 5.  0010 0000
+	)
+
+	fmt.Println("Log:", Ldate, Ltime, Lmicroseconds, Llongfile, Lshortfile, LUTC)
 }
 
 func makeMaps() {
@@ -343,6 +556,11 @@ func createSliceWithTheMake() {
 	fmt.Printf("myslice1 = %v\n", myslice1)
 	fmt.Printf("length = %d\n", len(myslice1))
 	fmt.Printf("capacity = %d\n", cap(myslice1))
+	for i := 0; i < 100; i++ {
+		myslice1 = append(myslice1, i)
+	}
+
+	fmt.Printf("myslice1 = %v\n", myslice1)
 
 	fmt.Println("-------------")
 	// with omitted capacity

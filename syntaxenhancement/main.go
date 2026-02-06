@@ -16,9 +16,241 @@ func main() {
 
 	fmt.Println(longestConsecutive([]int{100, 4, 200, 1, 3, 2})) // medium
 
-	fmt.Println(moveZeroes([]int{0, 1, 0, 3, 12}))          // simple
+	fmt.Println(moveZeroes([]int{0, 1, 0, 3, 12})) // simple
+
 	fmt.Println(maxArea([]int{1, 8, 6, 2, 5, 4, 8, 3, 7}))  // medium
 	fmt.Println(maxArea2([]int{1, 8, 6, 2, 5, 4, 8, 3, 7})) // medium
+
+	fmt.Println(threeSum([]int{-1, 0, 1, 2, -1, -4}))  // medium
+	fmt.Println(threeSum([]int{0, 0, 0}))              // medium
+	fmt.Println(threeSum2([]int{-1, 0, 1, 2, -1, -4})) // medium
+	fmt.Println(threeSum2([]int{0, 0, 0, 0}))          // medium
+	fmt.Println(threeSum2([]int{0, 0, 0, 0}))          // medium
+	fmt.Println(threeSum2([]int{-1, 0, 1, 2, -1, -4})) // medium
+
+	fmt.Println(trap([]int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1}))  // hard
+	fmt.Println(trap([]int{4, 2, 0, 3, 2, 5}))                    // hard
+	fmt.Println(trap2([]int{0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1})) // hard
+	fmt.Println(trap2([]int{4, 2, 0, 3, 2, 5}))                   // hard
+
+	fmt.Println(lengthOfLongestSubstring("abcabcbb")) // medium
+	fmt.Println(lengthOfLongestSubstring("bbbbbbb"))  // medium
+	fmt.Println(lengthOfLongestSubstring("pwwkew"))   // medium
+	fmt.Println(findAnagrams("cbaebabacd", "abc"))    // medium
+}
+
+func findAnagrams(s string, p string) (sub_str []int) {
+	fmt.Println("========== find Anagrams ==========")
+	if len(s) < len(p) {
+		return []int{}
+	}
+
+	p_table := make([]int, 26)
+	win_table := make([]int, 26)
+
+	for i := 0; i < len(p); i++ {
+		// conversion to ASCII Code
+		p_table[p[i]-'a']++
+		win_table[s[i]-'a']++
+		fmt.Println("p[i] - 'a': ", p[i]-'a', ", s[i] - 'a': ", s[i]-'a')
+	}
+
+	if isEqualForFindAnagrams(win_table, p_table) { // first win
+		fmt.Println("First win end")
+		sub_str = append(sub_str, 0)
+	}
+
+	for i := len(p); i < len(s); i++ {
+		win_table[s[i-len(p)]-'a']--
+		fmt.Println("s[i-len(p)]-'a': ", s[i-len(p)]-'a', "need - 1")
+		win_table[s[i]-'a']++
+		fmt.Println("s[i] - 'a': ", s[i]-'a', "need + 1")
+
+		if isEqualForFindAnagrams(win_table, p_table) {
+			sub_str = append(sub_str, i-len(p)+1)
+		}
+	}
+	return
+}
+
+func isEqualForFindAnagrams(a, b []int) bool {
+	fmt.Println("========== is Equal For Find Anagrams ==========")
+	fmt.Println(a)
+	fmt.Println(b)
+	for i := 0; i < 26; i++ {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func lengthOfLongestSubstring(strs string) (max_len int) {
+	fmt.Println("========== length Of Longest Substring ==========")
+
+	charSet := make(map[byte]bool)
+	left := 0
+
+	for right := 0; right < len(strs); right++ {
+		for charSet[strs[right]] {
+			delete(charSet, strs[left])
+			left++
+		}
+
+		charSet[strs[right]] = true
+
+		l := right - left + 1
+		if l > max_len {
+			max_len = l
+		}
+	}
+
+	return
+}
+
+func trap(height []int) (area int) {
+	fmt.Println("========== trap ==========")
+	l := len(height) - 1
+	for i := 0; i < l; i++ {
+		left, right := i, l
+		if height[i] == 0 {
+			fmt.Println("skip: ", height[i], " i: ", i)
+			left++
+			continue
+		}
+		maxRight := 0
+		maxLeft := 0
+		for left < right {
+			fmt.Println("left: ", left, " right: ", right)
+			if height[right] > height[i] {
+				maxRight = height[right]
+			} else if height[left] > height[i] {
+				maxLeft = height[left]
+			}
+
+			left++
+			right--
+		}
+		fmt.Println("end----", i, height[left], area, maxRight, maxLeft, "\n", left, right)
+		if maxRight > maxLeft {
+			fmt.Println("maxRight > height[left]: ", maxRight, height[left])
+			area += maxRight - maxLeft
+			left++
+		} else if maxRight == maxLeft {
+			fmt.Println("maxRight == height[left]: ", maxRight, height[left])
+			area += maxRight
+			left++
+		} else {
+			fmt.Println("maxRight < height[left]: ", maxRight, height[left])
+			area += maxLeft - maxRight
+			left++
+		}
+		fmt.Println("area----", area)
+	}
+	return
+}
+
+func trap2(height []int) (area int) {
+	fmt.Println("========== trap 2 ==========")
+	if len(height) < 3 {
+		return
+	}
+	left, right := 0, len(height)-1
+	left_max, right_max := 0, 0
+
+	for left < right {
+		if height[left] < height[right] {
+			if height[left] >= left_max {
+				left_max = height[left]
+			} else {
+				area += left_max - height[left]
+			}
+			left++
+		} else {
+			if height[right] >= right_max {
+				right_max = height[right]
+			} else {
+				area += right_max - height[right]
+			}
+			right--
+		}
+	}
+	return
+}
+
+// O(n²)
+func threeSum(nums []int) (results [][]int) {
+	fmt.Println("========== three Sum ==========")
+	left, right := 0, 1
+
+	mapping := make(map[int][]int) // sum : num array
+	secondIndex := right + 1
+	for left < (len(nums) - 2) {
+
+		first := nums[right]
+		second := nums[secondIndex]
+
+		result := nums[left] + first + second
+		fmt.Println("result:", result)
+
+		if mapping[result] == nil {
+			mapping[result] = append(mapping[result], nums[left], first, second)
+		} else if result == 0 {
+			fmt.Println("add to mapping: ", result, " because: ", nums[left], first, second, " has: ", mapping[result])
+			results = append(results, mapping[result])
+			delete(mapping, result)
+			results = append(results, []int{nums[left], first, second})
+		}
+
+		if secondIndex == len(nums)-1 { // reset pointer, move left pointer
+			left++
+			secondIndex = left + 2
+			right = left + 1
+		} else { // move right and secondIndex  pointer
+			right++
+			secondIndex++
+		}
+
+		if left == len(nums)-2 && mapping[0] != nil {
+			results = append(results, mapping[result])
+			delete(mapping, result)
+		}
+	}
+	return
+}
+
+// O(n²)
+func threeSum2(nums []int) [][]int {
+	sort.Ints(nums)
+	results := [][]int{}
+	n := len(nums)
+
+	for i := 0; i < n-2; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			continue
+		}
+		left, right := i+1, n-1
+		target := -nums[i]
+		for left < right {
+			sum := nums[left] + nums[right]
+			if sum == target {
+				results = append(results, []int{nums[i], nums[left], nums[right]})
+				for left < right && nums[left] == nums[left+1] {
+					left++
+				}
+				for left < right && nums[right] == nums[right-1] {
+					right--
+				}
+				left++
+				right--
+			} else if sum < target {
+				left++
+			} else {
+				right--
+			}
+		}
+	}
+	return results
 }
 
 func maxArea(height []int) (maxArea int) { // O(N²)
