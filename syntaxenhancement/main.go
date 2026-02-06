@@ -37,6 +37,9 @@ func main() {
 	fmt.Println(lengthOfLongestSubstring("bbbbbbb"))  // medium
 	fmt.Println(lengthOfLongestSubstring("pwwkew"))   // medium
 	fmt.Println(findAnagrams("cbaebabacd", "abc"))    // medium
+	fmt.Println(findAnagrams("abab", "ab"))           // medium
+	fmt.Println(findAnagrams2("cbaebabacd", "abc"))   // medium
+	fmt.Println(findAnagrams2("abab", "ab"))          // medium
 }
 
 func findAnagrams(s string, p string) (sub_str []int) {
@@ -45,8 +48,7 @@ func findAnagrams(s string, p string) (sub_str []int) {
 		return []int{}
 	}
 
-	p_table := make([]int, 26)
-	win_table := make([]int, 26)
+	p_table, win_table := [26]int{}, [26]int{}
 
 	for i := 0; i < len(p); i++ {
 		// conversion to ASCII Code
@@ -55,7 +57,7 @@ func findAnagrams(s string, p string) (sub_str []int) {
 		fmt.Println("p[i] - 'a': ", p[i]-'a', ", s[i] - 'a': ", s[i]-'a')
 	}
 
-	if isEqualForFindAnagrams(win_table, p_table) { // first win
+	if win_table == p_table { // first win
 		fmt.Println("First win end")
 		sub_str = append(sub_str, 0)
 	}
@@ -66,23 +68,32 @@ func findAnagrams(s string, p string) (sub_str []int) {
 		win_table[s[i]-'a']++
 		fmt.Println("s[i] - 'a': ", s[i]-'a', "need + 1")
 
-		if isEqualForFindAnagrams(win_table, p_table) {
+		if p_table == win_table {
 			sub_str = append(sub_str, i-len(p)+1)
 		}
 	}
 	return
 }
 
-func isEqualForFindAnagrams(a, b []int) bool {
-	fmt.Println("========== is Equal For Find Anagrams ==========")
-	fmt.Println(a)
-	fmt.Println(b)
-	for i := 0; i < 26; i++ {
-		if a[i] != b[i] {
-			return false
-		}
+func findAnagrams2(s string, p string) (ans []int) {
+	cntP := [26]int{}
+	for _, c := range p {
+		cntP[c-'a']++
 	}
-	return true
+
+	cntS := [26]int{}
+	for right, c := range s {
+		cntS[c-'a']++
+		left := right - len(p) + 1
+		if left < 0 {
+			continue
+		}
+		if cntS == cntP {
+			ans = append(ans, left)
+		}
+		cntS[s[left]-'a']--
+	}
+	return
 }
 
 func lengthOfLongestSubstring(strs string) (max_len int) {
