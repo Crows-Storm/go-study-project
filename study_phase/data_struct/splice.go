@@ -6,17 +6,18 @@ import (
 )
 
 func main() {
-	slice1 := make([]string, 5)
-	slice1[0] = "Apple"
-	slice1[1] = "Orange"
-	slice1[2] = "Banana"
+	slice1 := make([]string, 5) // []
+	slice1[0] = "Apple"         // append this, slice1[Apple]
+	slice1[1] = "Orange"        // append this, slice1[Apple Orange]
+	slice1[2] = "Banana"        // ...
 	slice1[3] = "Grape"
 	slice1[4] = "Plum"
 
 	fmt.Printf("\n=> Printing a slice\n")
 	fmt.Println(slice1)
 
-	slice2 := make([]string, 5, 8)
+	slice2 := make([]string, 5, 8) // [     ]
+	fmt.Println(slice2)
 	slice2[0] = "Apple"
 	slice2[1] = "Orange"
 	slice2[2] = "Banana"
@@ -33,6 +34,10 @@ func main() {
 	// Capture the capacity of the slice.
 	lastCap := cap(data)
 
+	// batch append, Change the number of expansions to 1
+	//batch := []string{}
+	//data = append(batch, va...)
+
 	// Append ~100k strings to the slice.
 	for record := 1; record <= 102400; record++ {
 		data = append(data, fmt.Sprintf("Rec: %d", record))
@@ -45,17 +50,26 @@ func main() {
 		}
 	}
 
-	slice3 := slice2[2:4]
+	// slice2 = [* * 0x1400010a020, 0x1400010a030 * *]
+	slice3 := slice2[2:4] // & address: [0x1400010a020, 0x1400010a030]
 
 	fmt.Printf("\n=> Slice of slice (before)\n")
 	inspectSlice(slice2)
 	inspectSlice(slice3)
 
-	slice3[0] = "CHANGED"
+	// change index 0(0x1400010a020) = CHANGED
+	slice3[0] = "CHANGED" // will change the value of the original array, slice3 is just a slice that references slice2
+
+	// if the append operation exceeds the slice's cap, it will cause the slice to split, but it will not affect the original array!
+	//fmt.Println("=====--====")
+	//fmt.Println(cap(slice3))
+	//slice3 = append(slice3, "CHANGED", "dsaaad", "dasdasa", "drwew", "1324") // expansion
+	//fmt.Println(cap(slice3))
 
 	fmt.Printf("\n=> Slice of slice (after)\n")
 	inspectSlice(slice2)
 	inspectSlice(slice3)
+	fmt.Printf("\n=> slice2 the original address: %p \n", slice2)
 
 	slice4 := make([]string, len(slice2))
 	copy(slice4, slice2)
@@ -73,8 +87,12 @@ func main() {
 	// Set a pointer to the second element of the slice.
 	twohundred := &x[1]
 
-	x = append(x, 800)
+	fmt.Printf("x old original address: %p \n", x)
+	fmt.Printf("old original address x[1] and twohundred: %p, %p \n", &x[1], &twohundred)
+	x = append(x, 800) // expansion, so this a new array
 
+	fmt.Printf("x new original address: %p\n", x)
+	fmt.Printf("old original address x[1] and twohundred: %p, %p \n", &x[1], &twohundred)
 	x[1]++
 
 	// By printing out the output, we can see that we are in trouble.

@@ -526,7 +526,7 @@ func accessAndChangeAndAppendAndCopySlices() {
 
 	fmt.Println("-------------")
 	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}
-	// Original slice
+	// Original function
 	fmt.Printf("numbers = %v\n", numbers)
 	fmt.Printf("length = %d\n", len(numbers))
 	fmt.Printf("capacity = %d\n", cap(numbers))
@@ -634,8 +634,8 @@ func arraysVariable() {
 	arr9 := [5]int{1: 10, 2: 40}
 	fmt.Println(arr9)
 
-	// len() function - returns the length of the slice (the number of elements in the slice)
-	// cap() function - returns the capacity of the slice (the number of elements the slice can grow or shrink to)
+	// len() function - returns the length of the function (the number of elements in the function)
+	// cap() function - returns the capacity of the function (the number of elements the function can grow or shrink to)
 
 	fmt.Println("-------------")
 	myslice1 := []int{}
