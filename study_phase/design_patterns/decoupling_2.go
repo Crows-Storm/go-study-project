@@ -12,14 +12,31 @@ package main
 //	rand.NewSource(time.Now().UnixNano())
 //}
 //
+//// Data is the structure of the data we are copying.
 //type Data struct {
-//	Line string // file Stream
+//	Line string
 //}
 //
+//// Xenia is a system we need to pull data from.
 //type Xenia struct {
 //	Host    string
 //	Timeout time.Duration
-//	//fileStream string
+//}
+//
+//// Pillar is a system we need to store data into.
+//type Pillar struct {
+//	Host    string
+//	Timeout time.Duration
+//}
+//
+//// Puller declares behavior for pulling data.
+//type Puller interface {
+//	Pull(d *Data) error
+//}
+//
+//// Storer declares behavior for storing data.
+//type Storer interface {
+//	Store(d *Data) error
 //}
 //
 //func (*Xenia) Pull(d *Data) error {
@@ -34,12 +51,6 @@ package main
 //		fmt.Println("In: ", d.Line)
 //		return nil
 //	}
-//}
-//
-//type Pillar struct {
-//	Host    string
-//	Timeout time.Duration
-//	//fileStream string
 //}
 //
 //func (*Pillar) Store(d *Data) error {

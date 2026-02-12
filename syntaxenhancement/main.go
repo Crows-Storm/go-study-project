@@ -36,10 +36,34 @@ func main() {
 	fmt.Println(lengthOfLongestSubstring("abcabcbb")) // medium
 	fmt.Println(lengthOfLongestSubstring("bbbbbbb"))  // medium
 	fmt.Println(lengthOfLongestSubstring("pwwkew"))   // medium
-	fmt.Println(findAnagrams("cbaebabacd", "abc"))    // medium
-	fmt.Println(findAnagrams("abab", "ab"))           // medium
-	fmt.Println(findAnagrams2("cbaebabacd", "abc"))   // medium
-	fmt.Println(findAnagrams2("abab", "ab"))          // medium
+
+	fmt.Println(findAnagrams("cbaebabacd", "abc"))  // medium
+	fmt.Println(findAnagrams("abab", "ab"))         // medium
+	fmt.Println(findAnagrams2("cbaebabacd", "abc")) // medium
+	fmt.Println(findAnagrams2("abab", "ab"))        // medium
+
+	fmt.Println(subarraySum([]int{1, 1, 1}, 2))                   // medium
+	fmt.Println(subarraySum([]int{1, 2, 3}, 3))                   // medium
+	fmt.Println(subarraySum([]int{3, 1, 2, 3, 2, 1, 3, 3, 3}, 3)) // medium
+	fmt.Println(subarraySum([]int{1, 2, 1, 2, 1}, 3))             // medium
+	fmt.Println(subarraySum([]int{1, -1, 0}, 0))                  // medium
+
+}
+
+func subarraySum(nums []int, k int) (count int) {
+	fmt.Println("========== subarray Sum 2 ==========")
+	sum := 0
+	prefixSum := make(map[int]int)
+	prefixSum[0] = 1 // v = 0
+
+	for i := 0; i < len(nums); i++ {
+		sum += nums[i]
+		if val, exists := prefixSum[sum-k]; exists {
+			count += val
+		}
+		prefixSum[sum]++
+	}
+	return count
 }
 
 func findAnagrams(s string, p string) (sub_str []int) {
