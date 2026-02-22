@@ -1,5 +1,7 @@
 package main
 
+// TODO: Apply what you have learned to achieve, case NO1: Bank System
+
 import (
 	"errors"
 	"fmt"

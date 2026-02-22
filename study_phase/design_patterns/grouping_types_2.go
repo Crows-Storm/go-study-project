@@ -21,7 +21,7 @@ func (d Dog) Speak() {
 		"I am a mammal with a pack factor of", d.PackFactor)
 }
 
-func (d Dog) DrugSearch() {
+func (d *Dog) DrugSearch() {
 	fmt.Println("Woof!", "I am a dog", "My name is: ", d.Name, ", i'm Drug Search!!!")
 }
 
